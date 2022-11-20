@@ -1,7 +1,7 @@
 {
-	"name": "obsidian-sample-plugin",
-	"version": "1.0.0",
-	"description": "This is a sample plugin for Obsidian (https://obsidian.md)",
+	"name": "text-dataset-aid-plugin-obsidian",
+	"version": "0.0.1",
+	"description": "A plugin to help you create text datasets for machine learning.",
 	"main": "main.js",
 	"scripts": {
 		"dev": "node esbuild.config.mjs",

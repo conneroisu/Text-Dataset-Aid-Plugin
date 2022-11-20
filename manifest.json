@@ -1,10 +1,10 @@
 {
-	"id": "obsidian-sample-plugin",
-	"name": "Sample Plugin",
-	"version": "1.0.0",
+	"id": "text-dataset-aid-plugin-obsidian",
+	"name": "Text Dataset Aid Plugin",
+	"version": "0.0.1",
 	"minAppVersion": "0.15.0",
-	"description": "This is a sample plugin for Obsidian. This plugin demonstrates some of the capabilities of the Obsidian API.",
-	"author": "Obsidian",
+	"description": "A plugin to help you create text datasets for machine learning.",
+	"author": "Conner Ohnesorge",
 	"authorUrl": "https://obsidian.md",
 	"isDesktopOnly": false
 }
