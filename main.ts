@@ -1,12 +1,21 @@
-import { App, Editor, MarkdownView, Modal, Notice, Plugin, PluginSettingTab, Setting } from 'obsidian';
-
+import { addIcon, App, Editor, MarkdownView, Modal, Notice, Plugin, PluginSettingTab, Setting } from 'obsidian';
+import { PromptAid} from './constants';
+import { CompletionAid } from './constants';
 
 interface TextDatasetAidSettings {
-	mySetting: string;
+	datasetFile: string;
+	promptPrefix: string;
+	promptSuffix: string;
+	completionPrefix: string;
+	completionSuffix: string;
 }
 
 const DEFAULT_SETTINGS: TextDatasetAidSettings = {
-	mySetting: 'default'
+	datasetFile: 'dataset.txt',
+	promptPrefix: "{\"prompt\": ",
+	promptSuffix: ",",
+	completionPrefix: "\"completion\": ",
+	completionSuffix: "}"
 }
 
 export default class TextDatasetAid extends Plugin {
@@ -14,34 +23,37 @@ export default class TextDatasetAid extends Plugin {
 
 	async onload() {
 		await this.loadSettings();
-
+		addIcon('PromptAid', PromptAid);
+		addIcon('CompletionAid', CompletionAid);
 		// This creates an icon in the left ribbon.
-		const ribbonIconEl = this.addRibbonIcon('cross', 'Sample Plugin', (evt: MouseEvent) => {
+		const ribbonIconEl = this.addRibbonIcon('PromptAid', 'PromptAid', (evt: MouseEvent) => {
+			
+
+
+		});
+		const completionIconEl = this.addRibbonIcon('CompletionAid', 'CompletionAid', (evt: MouseEvent) => {
 			// Called when the user clicks the icon.
 			new Notice('This is a notice!');
 		});
 		// Perform additional things with the ribbon
 		ribbonIconEl.addClass('my-plugin-ribbon-class');
 
-		// This adds a status bar item to the bottom of the app. Does not work on mobile apps.
-		const statusBarItemEl = this.addStatusBarItem();
-		statusBarItemEl.setText('Status Bar Text');
 
-		// This adds a simple command that can be triggered anywhere
-		this.addCommand({
-			id: 'open-sample-modal-simple',
-			name: 'Open sample modal (simple)',
-			callback: () => {
-				new SampleModal(this.app).open();
-			}
-		});
 		// This adds an editor command that can perform some operation on the current editor instance
 		this.addCommand({
-			id: 'sample-editor-command',
-			name: 'Sample editor command',
+			id: 'prompt-dataset-aid',
+			name: 'Send prompt to dataset',
+			icon: 'PromptAid',
 			editorCallback: (editor: Editor, view: MarkdownView) => {
-				console.log(editor.getSelection());
-				editor.replaceSelection('Sample Editor Command');
+				//get the selected text
+				const selectedText = editor.getSelection();
+				//add quotes around the selected text with /" and prefix and suffix
+				const quotedText = this.settings.promptPrefix + "\"" + selectedText + "\"" + this.settings.promptSuffix;
+				//append the quoted text to the dataset file with vault
+				this.app.vault.adapter.write(this.settings.datasetFile, quotedText);
+
+				new Notice('Selection sent as Prompt to dataset');
+
 			}
 		});
 		// This adds a complex command that can check whether the current state of the app allows execution of the command
@@ -122,15 +134,56 @@ class SampleSettingTab extends PluginSettingTab {
 		containerEl.createEl('h2', {text: 'Settings for my awesome plugin.'});
 
 		new Setting(containerEl)
-			.setName('Setting #1')
-			.setDesc('It\'s a secret')
+			.setName('Dataset File')
+			.setDesc('The file containing the dataset.')
 			.addText(text => text
-				.setPlaceholder('Enter your secret')
-				.setValue(this.plugin.settings.mySetting)
+				.setPlaceholder('dataset.txt')
+				.setValue(this.plugin.settings.datasetFile)
 				.onChange(async (value) => {
-					console.log('Secret: ' + value);
-					this.plugin.settings.mySetting = value;
+					this.plugin.settings.datasetFile = value;
 					await this.plugin.saveSettings();
 				}));
+		new Setting(containerEl)
+			.setName('Prompt Prefix')
+			.setDesc('The prefix for the prompt.')
+			.addText(text => text
+				.setPlaceholder('{"prompt": ')
+				.setValue(this.plugin.settings.promptPrefix)
+				.onChange(async (value) => {
+					this.plugin.settings.promptPrefix = value;
+					await this.plugin.saveSettings();
+				}));
+		new Setting(containerEl)
+			.setName('Prompt Suffix')
+			.setDesc('The suffix for the prompt.')
+			.addText(text => text
+				.setPlaceholder(',')
+				.setValue(this.plugin.settings.promptSuffix)
+				.onChange(async (value) => {
+					this.plugin.settings.promptSuffix = value;
+					await this.plugin.saveSettings();
+				}));
+		new Setting(containerEl)
+			.setName('Completion Prefix')
+			.setDesc('The prefix for the completion.')
+			.addText(text => text
+				.setPlaceholder('"completion": ')
+				.setValue(this.plugin.settings.completionPrefix)
+				.onChange(async (value) => {
+					this.plugin.settings.completionPrefix = value;
+					await this.plugin.saveSettings();
+				}));
+		new Setting(containerEl)
+			.setName('Completion Suffix')
+			.setDesc('The suffix for the completion.')
+			.addText(text => text
+				.setPlaceholder('}')
+				.setValue(this.plugin.settings.completionSuffix)
+				.onChange(async (value) => {
+					this.plugin.settings.completionSuffix = value;
+					await this.plugin.saveSettings();
+				}));
+
+	
 	}
 }
