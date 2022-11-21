@@ -1,4 +1,3 @@
-![[readme file for text dataset aid 2022-11-20 14.29.40.excalidraw]]
 
 Example of finetuning dataset
 ```json
@@ -8,6 +7,9 @@ Example of finetuning dataset
 
 
 ## Personalize your Second Brain Buddy(Text Generation Model)
+
+[![Build obsidian plugin](https://github.com/conneroisu/Text-Dataset-Aid-Plugin/actions/workflows/release.yml/badge.svg)](https://github.com/conneroisu/Text-Dataset-Aid-Plugin/actions/workflows/release.yml)
+
 
 # Context 
 The creation of NLP and text generation datasets are extremely impactual and has the potential to allow for researchers to train models that can automatically generate text. However, the creation of custom datasets is a teadious and slow process.
