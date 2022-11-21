@@ -1,73 +1,178 @@
-# Obsidian Sample Plugin
-[![Build obsidian plugin](https://github.com/conneroisu/Text-Dataset-Aid-Plugin/actions/workflows/release.yml/badge.svg)](https://github.com/conneroisu/Text-Dataset-Aid-Plugin/actions/workflows/release.yml)
-This is a sample plugin for Obsidian (https://obsidian.md).
+![[readme file for text dataset aid 2022-11-20 14.29.40.excalidraw]]
 
-This project uses Typescript to provide type checking and documentation.
-The repo depends on the latest plugin API (obsidian.d.ts) in Typescript Definition format, which contains TSDoc comments describing what it does.
-
-**Note:** The Obsidian API is still in early alpha and is subject to change at any time!
-
-This sample plugin demonstrates some of the basic functionality the plugin API can do.
-- Changes the default font color to red using `styles.css`.
-- Adds a ribbon icon, which shows a Notice when clicked.
-- Adds a command "Open Sample Modal" which opens a Modal.
-- Adds a plugin setting tab to the settings page.
-- Registers a global click event and output 'click' to the console.
-- Registers a global interval which logs 'setInterval' to the console.
-
-## First time developing plugins?
-
-Quick starting guide for new plugin devs:
-
-- Check if [someone already developed a plugin for what you want](https://obsidian.md/plugins)! There might be an existing plugin similar enough that you can partner up with.
-- Make a copy of this repo as a template with the "Use this template" button (login to GitHub if you don't see it).
-- Clone your repo to a local development folder. For convenience, you can place this folder in your `.obsidian/plugins/your-plugin-name` folder.
-- Install NodeJS, then run `npm i` in the command line under your repo folder.
-- Run `npm run dev` to compile your plugin from `main.ts` to `main.js`.
-- Make changes to `main.ts` (or create new `.ts` files). Those changes should be automatically compiled into `main.js`.
-- Reload Obsidian to load the new version of your plugin.
-- Enable plugin in settings window.
-- For updates to the Obsidian API run `npm update` in the command line under your repo folder.
-
-## Releasing new releases
-
-- Update your `manifest.json` with your new version number, such as `1.0.1`, and the minimum Obsidian version required for your latest release.
-- Update your `versions.json` file with `"new-plugin-version": "minimum-obsidian-version"` so older versions of Obsidian can download an older version of your plugin that's compatible.
-- Create new GitHub release using your new version number as the "Tag version". Use the exact version number, don't include a prefix `v`. See here for an example: https://github.com/obsidianmd/obsidian-sample-plugin/releases
-- Upload the files `manifest.json`, `main.js`, `styles.css` as binary attachments. Note: The manifest.json file must be in two places, first the root path of your repository and also in the release.
-- Publish the release.
-
-> You can simplify the version bump process by running `npm version patch`, `npm version minor` or `npm version major` after updating `minAppVersion` manually in `manifest.json`.
-> The command will bump version in `manifest.json` and `package.json`, and add the entry for the new version to `versions.json`
-
-## Adding your plugin to the community plugin list
-
-- Check https://github.com/obsidianmd/obsidian-releases/blob/master/plugin-review.md
-- Publish an initial version.
-- Make sure you have a `README.md` file in the root of your repo.
-- Make a pull request at https://github.com/obsidianmd/obsidian-releases to add your plugin.
-
-## How to use
-
-- Clone this repo.
-- `npm i` or `yarn` to install dependencies
-- `npm run dev` to start compilation in watch mode.
-
-## Manually installing the plugin
-
-- Copy over `main.js`, `styles.css`, `manifest.json` to your vault `VaultFolder/.obsidian/plugins/your-plugin-id/`.
-
-## Improve code quality with eslint (optional)
-- [ESLint](https://eslint.org/) is a tool that analyzes your code to quickly find problems. You can run ESLint against your plugin to find common bugs and ways to improve your code. 
-- To use eslint with this project, make sure to install eslint from terminal:
-  - `npm install -g eslint`
-- To use eslint to analyze this project use this command:
-  - `eslint main.ts`
-  - eslint will then create a report with suggestions for code improvement by file and line number.
-- If your source code is in a folder, such as `src`, you can use eslint with this command to analyze all files in that folder:
-  - `eslint .\src\`
+Example of finetuning dataset
+```json
+{"prompt":"Company: BHFF insurance\nProduct: allround insurance\nAd:One stop shop for all your insurance needs!\nSupported:", "completion":" yes"}
+{"prompt":"Company: Loft conversion specialists\nProduct: -\nAd:Straight teeth in weeks!\nSupported:", "completion":" no"}
+```
 
 
-## API Documentation
+## Personalize your Second Brain Buddy(Text Generation Model)
 
-See https://github.com/obsidianmd/obsidian-api
+# Context 
+The creation of NLP and text generation datasets are extremely impactual and has the potential to allow for researchers to train models that can automatically generate text. However, the creation of custom datasets is a teadious and slow process.
+
+The text dataset aid is a helpful tool that can aid the creation of finetuning datasets for text generation models like GPT-3 by hand! This can make the text generated by your model after finetuning to be more personalized, detailed, or better formatted. Say no to dealing with menus through hotkey configurations!
+
+This plugin can be used to quickly generate training data for NLP and text generation models. This would speed up research in these areas, as well as make it easier for practitioners to train these models.
+
+The text dataset aid plugin is a helpful tool that can aid the creation of finetuning datasets for text generation models like GPT-3 by hand. This can make the text generated by your model after finetuning to be more personalized, detailed, or better formatted. Say no to dealing with menus through hotkey configurations!
+
+## Context within your second brain 
+Updating your own text generation model on your collected dataset whilst working in your second brain allows for your model to better fit your second brain's needs. This plugin fits in any creation or editing workflow because of the nature of commands within obsidian. Hope that you use this plugin as much as I do!
+
+# Advantages of Finetuning
+Fintuning your text generation model allows for the creation of text that is more natural and expressive. 
+1. increased accuracy in text prediction/generation 
+2. increased fluency and coherence in text generation
+3. greater control over the style and content of generated text
+4. More control over the types of outputs the model produces
+5. Greater flexibility in the types of inputs the model can accept
+6. The ability to produce more human-like outputs
+7. Increased accuracy in the prediction of certain types of outputs
+
+An great resource for fine-tuning principles from [microsoft](https://learn.microsoft.com/en-us/azure/cognitive-services/openai/how-to/prepare-dataset)
+
+# Usage
+The core function of this plugin is made easier through the use of vim mode, but should work in either case. 
+There are two commands offered currently:(Each of these commands has an acommpanying hotkey configureable from hotkeys) 
+
+When you send the prompt to the dataset if there is already a prompt there, the plugin does nothing. 
+
+When you send the completion to the dataset and there is already a prompt the text selection is sent to the dataset as a completion to that prompt.
+
+## Open Ended Generation Support!
+When you send the completion to the dataset  and there is not a prompt, the text selection is inserted into the dataset with a empty prompt prepended to the text selection.
+
+an example of this 
+```json
+{"prompt":"", "completion":"Hello can I help you?"}
+```
+another example 
+```json 
+{"prompt":"", "completion":"Hi, How can I help you today"}
+```
+
+Send the Selection to send to your dataset file as prompt
+Send the Selection to send to your dataset file as completion
+
+# Installation
+## Installing from the community plugins page in obsidian
+-   Open Settings > Third-party plugin
+-   Make sure Safe mode is **off**
+-   Click Browse community plugins
+-   Search for "Dataset Finetuning Aid Plugin"
+-   Click Install
+-   Once installed, close the community plugins window and activate the newly installed plugin
+## Manually Installing from github 
+-   Download the Latest Release from the Releases section of the GitHub Repository(if you can't find this it should be to the right while your viewing this)
+-   Extract the plugin folder from the zip to your vault's plugins folder: `<vault>/.obsidian/plugins/`  
+    Note: On some machines the `.obsidian` folder may be hidden. On MacOS you should be able to press `Command+Shift+Dot` to show the folder in Finder.
+-   Reload Obsidian
+
+# Settings
+There are four main settings that are configurable within the settings panel of the plugin, but the default values are set up for the popular format for datasets for text generation models called jsonl.
+
+| Setting Name          | Description                                                                     | Default       |
+| --------------------- | ------------------------------------------------------------------------------- | ------------- |
+| Prefix for Prompts    | This is the string that is prepended to the prompt when sent to the dataset     | `{"prompt":`    |
+| Suffix for Prompts    | This is the string that is appended to the prompt when sent to the dataset      | `,`             |
+| Prefix for Completion | This is the string that is prepended to the completion when sent to the dataset | `"completion":` |
+| Suffix for Completion | This is the string that is appended to the completion when sent to the dataset  | `}\n`              |
+
+
+[Help within development](https://github.com/TfTHacker/obsidian42-text-transporter/blob/main/src/features/transporterFunctions.ts)
+
+# Roadmap 
+# `v0.0.1`
+- [x] Clone the repository for the sample plugin offered by obsidian ✅ 2022-11-20
+
+- [x] Update the version in `manifest.json` ✅ 2022-11-20
+- [x] Update the version in `package.json` ✅ 2022-11-20
+- [x] Update the version in `versions.json` 
+- [x] New git tag for version ✅ 2022-11-20
+
+
+# `v0.0.2`
+- [x] Rename the interfaces to that of text dataset aid ✅ 2022-11-20
+
+- [x] Update the version in `manifest.json` ✅ 2022-11-20
+- [x] Update the version in `package.json` ✅ 2022-11-20
+- [x] Update the version in `versions.json` ✅ 2022-11-20
+- [x] New git tag for version ✅ 2022-11-20
+# `v0.0.3`
+- [x] Create Media background for the readme ✅ 2022-11-21
+- [x] Complete Readme Page ✅ 2022-11-21
+- [x] Update the readme ✅ 2022-11-21
+- [x] Renamed sample plugin interfaces ✅ 2022-11-21
+
+- [ ] Update the version in `manifest.json`
+- [ ] Update the version in `package.json`
+- [ ] Update the version in `versions.json`
+- [ ] New git tag for version 
+
+# `v0.0.4`
+- [ ] svg logo for the plugin designed
+- [ ] embedded logo into plugin directory
+- [ ] logo present in the toolbar 
+
+- [ ] Update the version in `manifest.json`
+- [ ] Update the version in `package.json`
+- [ ] Update the version in `versions.json`
+- [ ] New git tag for version 
+
+# `v0.0.5`
+- [ ] Media Banner for github designed and embeded into readme
+- [ ] Code is refactored and comment annotations
+
+
+- [ ] Update the version in `manifest.json`
+- [ ] Update the version in `package.json`
+- [ ] Update the version in `versions.json`
+- [ ] New git tag for version 
+# `v0.0.6`
+- [ ] Prototyped formatting function
+
+- [ ] Update the version in `manifest.json`
+- [ ] Update the version in `package.json`
+- [ ] Update the version in `versions.json`
+- [ ] New git tag for version 
+# `v0.0.7`
+- [ ] Ensure the printing of a new line after the formatting
+
+
+- [ ] Update the version in `manifest.json`
+- [ ] Update the version in `package.json`
+- [ ] Update the version in `versions.json`
+- [ ] New git tag for version 
+# `v0.1.0`
+Fully working send to dataset with formatting
+
+- [ ] Update the version in `manifest.json`
+- [ ] Update the version in `package.json`
+- [ ] Update the version in `versions.json`
+- [ ] New git tag for version 
+# `v0.1.1`
+- [ ] Update the version in `manifest.json`
+- [ ] Update the version in `package.json`
+- [ ] Update the version in `versions.json`
+- [ ] New git tag for version 
+
+# `v0.1.2`
+- [ ] More than one dataset option implemented - A user should be able to have more than one dataset location configurable with a add button in the plugin settings. 
+
+- [ ] Update the version in `manifest.json`
+- [ ] Update the version in `package.json`
+- [ ] Update the version in `versions.json`
+- [ ] New git tag for version 
+
+# Inspiration
+
+Inspired by the efficiency and appeal of fine-tuning your own language model, this plugin allows for you to build datasets from your notes in the form of prompts and responses. Automatically formats the text to the specification of [OpenAI](https://openai.com/) for finetuning models like GPT3.
+
+This plugin shares simularities to the textTransporter Plugin made by [TfTHacker](https://github.com/TfTHacker/obsidian42-text-transporter/)
+
+# Versioning notes
+You can simplify the version bump process by running `npm version patch`, `npm version minor` or `npm version major` after updating `minAppVersion` manually in `manifest.json`. The command will bump version in `manifest.json` and `package.json`, and add the entry for the new version to `versions.json`
+
+
