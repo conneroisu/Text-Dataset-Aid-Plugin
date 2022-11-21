@@ -14,7 +14,7 @@ const DEFAULT_SETTINGS: TextDatasetAidSettings = {
 	datasetFile: 'dataset.txt',
 	promptPrefix: "{\"prompt\": ",
 	promptSuffix: ",",
-	completionPrefix: "\"completion\": ",
+	completionPrefix: " \"completion\": ",
 	completionSuffix: "}"
 }
 
@@ -23,21 +23,13 @@ export default class TextDatasetAid extends Plugin {
 
 	async onload() {
 		await this.loadSettings();
+
+
 		addIcon('PromptAid', PromptAid);
 		addIcon('CompletionAid', CompletionAid);
 		// This creates an icon in the left ribbon.
-		const ribbonIconEl = this.addRibbonIcon('PromptAid', 'PromptAid', (evt: MouseEvent) => {
-			
-
-
-		});
-		const completionIconEl = this.addRibbonIcon('CompletionAid', 'CompletionAid', (evt: MouseEvent) => {
-			// Called when the user clicks the icon.
-			new Notice('This is a notice!');
-		});
-		// Perform additional things with the ribbon
-		ribbonIconEl.addClass('my-plugin-ribbon-class');
-
+		
+		
 
 		// This adds an editor command that can perform some operation on the current editor instance
 		this.addCommand({
@@ -45,39 +37,67 @@ export default class TextDatasetAid extends Plugin {
 			name: 'Send prompt to dataset',
 			icon: 'PromptAid',
 			editorCallback: (editor: Editor, view: MarkdownView) => {
+				//read teh last line of the dataset file using vault
+				const lastLine = this.app.vault.adapter.read(this.settings.datasetFile, -1);
+				//Convert the last line to a string
+				const lastLineString = lastLine.toString();
+				//if there is no content in the last line
+				if (lastLineString.includes("prompt")) {
+					new Notice("Dataset file already has a prompt, a completion is needed for the the prompt: " + lastLineString);
+				}else{
+
 				//get the selected text
 				const selectedText = editor.getSelection();
 				//add quotes around the selected text with /" and prefix and suffix
 				const quotedText = this.settings.promptPrefix + "\"" + selectedText + "\"" + this.settings.promptSuffix;
 				//append the quoted text to the dataset file with vault
-				this.app.vault.adapter.write(this.settings.datasetFile, quotedText);
+				this.app.vault.adapter.append(this.settings.datasetFile, quotedText);
 
 				new Notice('Selection sent as Prompt to dataset');
+				}
 
 			}
 		});
-		// This adds a complex command that can check whether the current state of the app allows execution of the command
 		this.addCommand({
-			id: 'open-sample-modal-complex',
-			name: 'Open sample modal (complex)',
-			checkCallback: (checking: boolean) => {
-				// Conditions to check
-				const markdownView = this.app.workspace.getActiveViewOfType(MarkdownView);
-				if (markdownView) {
-					// If checking is true, we're simply "checking" if the command can be run.
-					// If checking is false, then we want to actually perform the operation.
-					if (!checking) {
-						new SampleModal(this.app).open();
-					}
+			id: 'completion-dataset-aid',
+			name: 'Send completion to dataset',
+			icon: 'CompletionAid',
+			editorCallback: (editor: Editor, view: MarkdownView) => {
+				//get the selected text
+				const selectedText = editor.getSelection();
+				//read the last line of the dataset file
+				const lastLine = this.app.vault.adapter.read(this.settings.datasetFile, -1);
 
-					// This command will only show up in Command Palette when the check function returns true
-					return true;
+				//Convert lastLine to string
+				const lastLineString = lastLine.toString();
+				
+
+				//if the last line does not contain a prompt
+				if (!lastLineString.includes("prompt")) {
+					//create a open ended completion with an empty prompt
+					const quotedText = this.settings.promptPrefix + "\"" + "\"" + this.settings.promptSuffix + this.settings.completionPrefix + "\"" + selectedText + "\"" + this.settings.completionSuffix;
+					//add a new line to the end of the quoted text
+					const quotedTextWithNewLine = quotedText + "\n";
+					//append the quoted text to the dataset file with vault
+					this.app.vault.adapter.append(this.settings.datasetFile, quotedTextWithNewLine);
+
+					new Notice('Selection sent as Open Ended Completion to dataset');
+				}else{
+				//add quotes around the selected text with /" and prefix and suffix
+				const quotedText = this.settings.completionPrefix + "\"" + selectedText + "\"" + this.settings.completionSuffix;
+				// add new line to the end of the quoted text
+				const quotedTextWithNewLine = quotedText + "\n";
+				//append the quoted text to the dataset file with vault
+				this.app.vault.adapter.append(this.settings.datasetFile, quotedTextWithNewLine);
+				
+				new Notice('Selection sent as Completion to dataset');
 				}
 			}
-		});
+			});
+
 
 		// This adds a settings tab so the user can configure various aspects of the plugin
-		this.addSettingTab(new SampleSettingTab(this.app, this));
+		this.addSettingTab(new TextDatasetAidSettingTab(this.app, this));
 
 		// If the plugin hooks up any global DOM events (on parts of the app that doesn't belong to this plugin)
 		// Using this function will automatically remove the event listener when this plugin is disabled.
@@ -102,23 +122,9 @@ export default class TextDatasetAid extends Plugin {
 	}
 }
 
-class SampleModal extends Modal {
-	constructor(app: App) {
-		super(app);
-	}
 
-	onOpen() {
-		const {contentEl} = this;
-		contentEl.setText('Woah!');
-	}
 
-	onClose() {
-		const {contentEl} = this;
-		contentEl.empty();
-	}
-}
-
-class SampleSettingTab extends PluginSettingTab {
+class TextDatasetAidSettingTab extends PluginSettingTab {
 	plugin: TextDatasetAid;
 
 	constructor(app: App, plugin: TextDatasetAid) {
