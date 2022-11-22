@@ -4,7 +4,7 @@ Example of finetuning dataset
 {"prompt":"Company: BHFF insurance\nProduct: allround insurance\nAd:One stop shop for all your insurance needs!\nSupported:", "completion":" yes"}
 {"prompt":"Company: Loft conversion specialists\nProduct: -\nAd:Straight teeth in weeks!\nSupported:", "completion":" no"}
 ```
-![](https://i.imgur.com/D46sqM0.png)
+![image](https://user-images.githubusercontent.com/88785126/203184536-9199f720-a03b-423b-9bf6-81a68c7fbd28.png)
 
 ## Personalize your Second Brain Buddy(Text Generation Model)
 
