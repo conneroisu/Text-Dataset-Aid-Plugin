@@ -1,7 +1,7 @@
 import { addIcon, App, Editor, MarkdownView, Modal, Notice, Plugin, PluginSettingTab, Setting } from 'obsidian';
 import { PromptAid} from './constants';
 import { CompletionAid } from './constants';
-
+import { readFileSync } from 'fs';
 interface TextDatasetAidSettings {
 	datasetFile: string;
 	promptPrefix: string;
@@ -24,10 +24,8 @@ export default class TextDatasetAid extends Plugin {
 	async onload() {
 		await this.loadSettings();
 
-
 		addIcon('PromptAid', PromptAid);
 		addIcon('CompletionAid', CompletionAid);
-		// This creates an icon in the left ribbon.
 		
 		
 
@@ -37,25 +35,30 @@ export default class TextDatasetAid extends Plugin {
 			name: 'Send prompt to dataset',
 			icon: 'PromptAid',
 			editorCallback: (editor: Editor, view: MarkdownView) => {
-				//read teh last line of the dataset file using vault
-				const lastLine = this.app.vault.adapter.read(this.settings.datasetFile, -1);
-				//Convert the last line to a string
-				const lastLineString = lastLine.toString();
-				//if there is no content in the last line
-				if (lastLineString.includes("prompt")) {
-					new Notice("Dataset file already has a prompt, a completion is needed for the the prompt: " + lastLineString);
+				// Read from the dataset file in the vault
+				let dataset = readFileSync(this.app.vault.adapter.getFullPath(this.settings.datasetFile), 'utf8');
+				// get the last line in the dataset
+				let lastLine = dataset.split("\n").pop();
+
+				if(lastLine == "") {
+					// Get the current selection 
+					let selection = editor.getSelection();
+					// Get the dataset file
+					let datasetFile = this.settings.datasetFile;
+					// Get the prompt prefix
+					let promptPrefix = this.settings.promptPrefix;
+					// Get the prompt suffix
+					let promptSuffix = this.settings.promptSuffix;
+					// Get the prompt 
+					let datasetprompt = promptPrefix + "\"" + selection + "\"" + promptSuffix;
+					// log the prompt to the console
+					console.log("Prompt: " + datasetprompt);
+					// Append the prompt to the dataset file
+					this.app.vault.adapter.append(datasetFile, datasetprompt);
 				}else{
-
-				//get the selected text
-				const selectedText = editor.getSelection();
-				//add quotes around the selected text with /" and prefix and suffix
-				const quotedText = this.settings.promptPrefix + "\"" + selectedText + "\"" + this.settings.promptSuffix;
-				//append the quoted text to the dataset file with vault
-				this.app.vault.adapter.append(this.settings.datasetFile, quotedText);
-
-				new Notice('Selection sent as Prompt to dataset');
+					new Notice("Last line in dataset is not empty: " + lastLine);
+					new Notice("Please complete the last prompt before adding a new one.");
 				}
-
 			}
 		});
 		this.addCommand({
@@ -63,37 +66,48 @@ export default class TextDatasetAid extends Plugin {
 			name: 'Send completion to dataset',
 			icon: 'CompletionAid',
 			editorCallback: (editor: Editor, view: MarkdownView) => {
-				//get the selected text
-				const selectedText = editor.getSelection();
-				//read the last line of the dataset file
-				const lastLine = this.app.vault.adapter.read(this.settings.datasetFile, -1);
-
-				//Convert lastLine to string
-				const lastLineString = lastLine.toString();
 				
-
-				//if the last line does not contain a prompt
-				if (!lastLineString.includes("prompt")) {
-					//create a open ended completion with an empty prompt
-					const quotedText = this.settings.promptPrefix + "\"" + "\"" + this.settings.promptSuffix + this.settings.completionPrefix + "\"" + selectedText + "\"" + this.settings.completionSuffix;
-					//add a new line to the end of the quoted text
-					const quotedTextWithNewLine = quotedText + "\n";
-					//append the quoted text to the dataset file with vault
-					this.app.vault.adapter.append(this.settings.datasetFile, quotedTextWithNewLine);
-
-					new Notice('Selection sent as Open Ended Completion to dataset');
-				}else{
-				//add quotes around the selected text with /" and prefix and suffix
-				const quotedText = this.settings.completionPrefix + "\"" + selectedText + "\"" + this.settings.completionSuffix;
-				// add new line to the end of the quoted text
-				const quotedTextWithNewLine = quotedText + "\n";
-				//append the quoted text to the dataset file with vault
-				this.app.vault.adapter.append(this.settings.datasetFile, quotedTextWithNewLine);
+				// Get the prompt prefix
+				let promptPrefix = this.settings.promptPrefix;
+				// Get the prompt suffix
+				let promptSuffix = this.settings.promptSuffix;
+				// Get the completion prefix
+				let completionPrefix = this.settings.completionPrefix;
+				// Get the completion suffix
+				let completionSuffix = this.settings.completionSuffix;
+				// Get the dataset file 
+				let datasetFile = this.settings.datasetFile;
+				// Get the current selection
+				let selection = editor.getSelection();
 				
-				new Notice('Selection sent as Completion to dataset');
+				// Read from the dataset file in the vault
+				let dataset = readFileSync(this.app.vault.adapter.getFullPath(this.settings.datasetFile), 'utf8');
+				// get the last line in the dataset
+				let lastLine = dataset.split("\n").pop();
+
+				if(lastLine == "") {
+					//Open ended Completion
+					// Get the completion
+					let datasetOpenEndedCompletion = promptPrefix + "\"\"" + promptSuffix + completionPrefix + "\"" + selection + "\"" + completionSuffix;
+					// log the completion to the console
+					console.log("Open Ended Completion: " + datasetOpenEndedCompletion);
+					// Append the completion to the dataset file with a preceding empty prompt 
+					this.app.vault.adapter.append(datasetFile, datasetOpenEndedCompletion);
+
+
+				}else{ 
+					// Prompted Completion
+					// Get the completion
+					let datasetPromptedCompletion = completionPrefix + "\"" + selection + "\"" + completionSuffix;
+					// log the completion to the console
+					console.log("Prompted Completion: " + datasetPromptedCompletion);
+					// Append the completion to the dataset file
+					this.app.vault.adapter.append(datasetFile, datasetPromptedCompletion);
+					// Append a new line to the dataset file
+					this.app.vault.adapter.append(datasetFile, "\n");
+
 				}
-			}
-			});
+			}});
 
 
 		// This adds a settings tab so the user can configure various aspects of the plugin
