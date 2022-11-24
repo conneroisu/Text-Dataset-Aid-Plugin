@@ -2,6 +2,7 @@ import { addIcon, App, Editor, MarkdownView, Modal, Notice, Plugin, PluginSettin
 import { PromptAid} from './constants';
 import { CompletionAid } from './constants';
 import { readFileSync } from 'fs';
+
 interface TextDatasetAidSettings {
 	datasetFile: string;
 	promptPrefix: string;
@@ -98,11 +99,9 @@ export default class TextDatasetAid extends Plugin {
 				}else{ 
 					// Prompted Completion
 					// Get the completion
-					let datasetPromptedCompletion = completionPrefix + "\"" + selection + "\"" + completionSuffix;
-					// log the completion to the console
-					console.log("Prompted Completion: " + datasetPromptedCompletion);
+					console.log("Prompted Completion: " + completionPrefix + "\"" + selection + "\"" + completionSuffix);
 					// Append the completion to the dataset file
-					this.app.vault.adapter.append(datasetFile, datasetPromptedCompletion);
+					this.app.vault.adapter.append(datasetFile, completionPrefix + "\"" + selection + "\"" + completionSuffix);
 					// Append a new line to the dataset file
 					this.app.vault.adapter.append(datasetFile, "\n");
 
@@ -124,6 +123,8 @@ export default class TextDatasetAid extends Plugin {
 	}
 
 	onunload() {
+		console.log("unloading plugin");
+		// Release dataset file lock
 
 	}
 
