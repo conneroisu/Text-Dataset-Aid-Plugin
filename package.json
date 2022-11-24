@@ -1,6 +1,6 @@
 {
 	"name": "text-dataset-aid-plugin-obsidian",
-	"version": "0.0.3",
+	"version": "0.1.0",
 	"description": "A plugin to help you create text datasets for machine learning.",
 	"main": "main.js",
 	"scripts": {
@@ -21,5 +21,8 @@
 		"obsidian": "latest",
 		"tslib": "2.4.0",
 		"typescript": "4.7.4"
+	},
+	"dependencies": {
+		"fs": "^0.0.1-security"
 	}
 }
