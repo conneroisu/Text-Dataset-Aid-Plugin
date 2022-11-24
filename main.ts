@@ -23,6 +23,7 @@ export default class TextDatasetAid extends Plugin {
 	settings: TextDatasetAidSettings;
 
 	async onload() {
+		console.log("loading plugin");
 		await this.loadSettings();
 
 		addIcon('PromptAid', PromptAid);
@@ -37,27 +38,13 @@ export default class TextDatasetAid extends Plugin {
 			icon: 'PromptAid',
 			editorCallback: (editor: Editor, view: MarkdownView) => {
 				// Read from the dataset file in the vault
-				let dataset = readFileSync(this.app.vault.adapter.getFullPath(this.settings.datasetFile), 'utf8');
-				// get the last line in the dataset
-				let lastLine = dataset.split("\n").pop();
 
-				if(lastLine == "") {
-					// Get the current selection 
-					let selection = editor.getSelection();
-					// Get the dataset file
-					let datasetFile = this.settings.datasetFile;
-					// Get the prompt prefix
-					let promptPrefix = this.settings.promptPrefix;
-					// Get the prompt suffix
-					let promptSuffix = this.settings.promptSuffix;
-					// Get the prompt 
-					let datasetprompt = promptPrefix + "\"" + selection + "\"" + promptSuffix;
-					// log the prompt to the console
-					console.log("Prompt: " + datasetprompt);
+				if(readFileSync(this.app.vault.adapter.getFullPath(this.settings.datasetFile), 'utf8').split("\n").pop() == "") {
+					console.log("Prompt: " + this.settings.promptPrefix + "\"" + editor.getSelection() + "\"" + this.settings.promptSuffix);
 					// Append the prompt to the dataset file
-					this.app.vault.adapter.append(datasetFile, datasetprompt);
+					this.app.vault.adapter.append(this.settings.datasetFile, this.settings.promptPrefix + "\"" + editor.getSelection() + "\"" + this.settings.promptSuffix);
 				}else{
-					new Notice("Last line in dataset is not empty: " + lastLine);
+					new Notice("Last line in dataset is not empty: " + (this.app.vault.adapter.getFullPath(this.settings.datasetFile), 'utf8').split("\n").pop());
 					new Notice("Please complete the last prompt before adding a new one.");
 				}
 			}
@@ -68,42 +55,23 @@ export default class TextDatasetAid extends Plugin {
 			icon: 'CompletionAid',
 			editorCallback: (editor: Editor, view: MarkdownView) => {
 				
-				// Get the prompt prefix
-				let promptPrefix = this.settings.promptPrefix;
-				// Get the prompt suffix
-				let promptSuffix = this.settings.promptSuffix;
-				// Get the completion prefix
-				let completionPrefix = this.settings.completionPrefix;
-				// Get the completion suffix
-				let completionSuffix = this.settings.completionSuffix;
-				// Get the dataset file 
-				let datasetFile = this.settings.datasetFile;
-				// Get the current selection
-				let selection = editor.getSelection();
-				
-				// Read from the dataset file in the vault
-				let dataset = readFileSync(this.app.vault.adapter.getFullPath(this.settings.datasetFile), 'utf8');
-				// get the last line in the dataset
-				let lastLine = dataset.split("\n").pop();
 
-				if(lastLine == "") {
+				if(readFileSync(this.app.vault.adapter.getFullPath(this.settings.datasetFile), 'utf8').split("\n").pop() == "") {
 					//Open ended Completion
-					// Get the completion
-					let datasetOpenEndedCompletion = promptPrefix + "\"\"" + promptSuffix + completionPrefix + "\"" + selection + "\"" + completionSuffix;
-					// log the completion to the console
-					console.log("Open Ended Completion: " + datasetOpenEndedCompletion);
+					//log the completion to the console for debugging
+					console.log("Open Ended Completion: " + this.settings.promptPrefix + "\"\"" + this.settings.promptSuffix + this.settings.completionPrefix + "\"" + editor.getSelection() + "\"" + this.settings.completionSuffix);
 					// Append the completion to the dataset file with a preceding empty prompt 
-					this.app.vault.adapter.append(datasetFile, datasetOpenEndedCompletion);
+					this.app.vault.adapter.append(this.settings.datasetFile, this.settings.promptPrefix + "\"\"" + this.settings.promptSuffix + this.settings.completionPrefix + "\"" + editor.getSelection() + "\"" + this.settings.completionSuffix);
 
 
 				}else{ 
 					// Prompted Completion
 					// Get the completion
-					console.log("Prompted Completion: " + completionPrefix + "\"" + selection + "\"" + completionSuffix);
+					console.log("Prompted Completion: " + this.settings.completionPrefix + "\"" + editor.getSelection() + "\"" + this.settings.completionSuffix);
 					// Append the completion to the dataset file
-					this.app.vault.adapter.append(datasetFile, completionPrefix + "\"" + selection + "\"" + completionSuffix);
+					this.app.vault.adapter.append(this.settings.datasetFile, this.settings.completionPrefix + "\"" + editor.getSelection() + "\"" + this.settings.completionSuffix);
 					// Append a new line to the dataset file
-					this.app.vault.adapter.append(datasetFile, "\n");
+					this.app.vault.adapter.append(this.settings.datasetFile, "\n");
 
 				}
 			}});
@@ -112,14 +80,7 @@ export default class TextDatasetAid extends Plugin {
 		// This adds a settings tab so the user can configure various aspects of the plugin
 		this.addSettingTab(new TextDatasetAidSettingTab(this.app, this));
 
-		// If the plugin hooks up any global DOM events (on parts of the app that doesn't belong to this plugin)
-		// Using this function will automatically remove the event listener when this plugin is disabled.
-		this.registerDomEvent(document, 'click', (evt: MouseEvent) => {
-			console.log('click', evt);
-		});
 
-		// When registering intervals, this function will automatically clear the interval when the plugin is disabled.
-		this.registerInterval(window.setInterval(() => console.log('setInterval'), 5 * 60 * 1000));
 	}
 
 	onunload() {
