@@ -23,6 +23,7 @@ jobs:
         id: build
         run: |
           yarn
+          yarn add fs
           yarn run build --if-present
           mkdir ${{ env.PLUGIN_NAME }}
           cp main.js manifest.json ${{ env.PLUGIN_NAME }}
