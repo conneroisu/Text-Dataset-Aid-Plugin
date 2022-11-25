@@ -1,7 +1,6 @@
 import { addIcon, App, Editor, MarkdownView, Modal, Notice, Plugin, PluginSettingTab, Setting } from 'obsidian';
 import { PromptAid} from './constants';
 import { CompletionAid } from './constants';
-import { readFileSync } from 'fs';
 
 interface TextDatasetAidSettings {
 	datasetFile: string;
@@ -36,17 +35,20 @@ export default class TextDatasetAid extends Plugin {
 			id: 'prompt-dataset-aid',
 			name: 'Send prompt to dataset',
 			icon: 'PromptAid',
-			editorCallback: (editor: Editor, view: MarkdownView) => {
-				// Read from the dataset file in the vault
+			editorCallback: async(editor: Editor, view: MarkdownView) => {
 
-				if(readFileSync(this.app.vault.adapter.getFullPath(this.settings.datasetFile), 'utf8').split("\n").pop() == "") {
-					console.log("Prompt: " + this.settings.promptPrefix + "\"" + editor.getSelection() + "\"" + this.settings.promptSuffix);
-					// Append the prompt to the dataset file
-					this.app.vault.adapter.append(this.settings.datasetFile, this.settings.promptPrefix + "\"" + editor.getSelection() + "\"" + this.settings.promptSuffix);
-				}else{
-					new Notice("Last line in dataset is not empty: " + (this.app.vault.adapter.getFullPath(this.settings.datasetFile), 'utf8').split("\n").pop());
-					new Notice("Please complete the last prompt before adding a new one.");
-				}
+				this.app.vault.adapter.exists("PromptTrackFileConOhObsidian.txt").then((exists) => {
+					new Notice("File exists check: " + exists);
+
+					if(!exists) {
+						console.log("Prompt: " + this.settings.promptPrefix + "\"" + editor.getSelection() + "\"" + this.settings.promptSuffix);
+						// Append the prompt to the dataset file
+						this.app.vault.adapter.append(this.settings.datasetFile, this.settings.promptPrefix + "\"" + editor.getSelection() + "\"" + this.settings.promptSuffix);
+						this.app.vault.createBinary("PromptTrackFileConOhObsidian.txt","");
+					}else{
+						new Notice("Last line in dataset is not empty. Please complete the last prompt before adding a new one" );
+					}
+				});
 			}
 		});
 		this.addCommand({
@@ -55,26 +57,32 @@ export default class TextDatasetAid extends Plugin {
 			icon: 'CompletionAid',
 			editorCallback: (editor: Editor, view: MarkdownView) => {
 				
+				this.app.vault.adapter.exists("PromptTrackFileConOhObsidian.txt").then((exists) => {
 
-				if(readFileSync(this.app.vault.adapter.getFullPath(this.settings.datasetFile), 'utf8').split("\n").pop() == "") {
-					//Open ended Completion
-					//log the completion to the console for debugging
-					console.log("Open Ended Completion: " + this.settings.promptPrefix + "\"\"" + this.settings.promptSuffix + this.settings.completionPrefix + "\"" + editor.getSelection() + "\"" + this.settings.completionSuffix);
-					// Append the completion to the dataset file with a preceding empty prompt 
-					this.app.vault.adapter.append(this.settings.datasetFile, this.settings.promptPrefix + "\"\"" + this.settings.promptSuffix + this.settings.completionPrefix + "\"" + editor.getSelection() + "\"" + this.settings.completionSuffix);
+					if(!exists) {
+						//Open ended Completion
+						//log the completion to the console for debugging
+						console.log("Open Ended Completion: " + this.settings.promptPrefix + "\"\"" + this.settings.promptSuffix + this.settings.completionPrefix + "\"" + editor.getSelection() + "\"" + this.settings.completionSuffix);
+						// Append the completion to the dataset file with a preceding empty prompt 
+						this.app.vault.adapter.append(this.settings.datasetFile, this.settings.promptPrefix + "\"\"" + this.settings.promptSuffix + this.settings.completionPrefix + "\"" + editor.getSelection() + "\"" + this.settings.completionSuffix);
+						//delete the prompt tracking file
+						this.app.vault.adapter.remove("PromptTrackFileConOhObsidian.txt");
 
+					}else{ 
+						// Prompted Completion
+						// Get the completion
+						console.log("Prompted Completion: " + this.settings.completionPrefix + "\"" + editor.getSelection() + "\"" + this.settings.completionSuffix);
+						// Append the completion to the dataset file
+						this.app.vault.adapter.append(this.settings.datasetFile, this.settings.completionPrefix + "\"" + editor.getSelection() + "\"" + this.settings.completionSuffix);
+						// Append a new line to the dataset file
+						this.app.vault.adapter.append(this.settings.datasetFile, "\n");
+						//remove the prompt tracking file
+						this.app.vault.adapter.remove("PromptTrackFileConOhObsidian.txt");
 
-				}else{ 
-					// Prompted Completion
-					// Get the completion
-					console.log("Prompted Completion: " + this.settings.completionPrefix + "\"" + editor.getSelection() + "\"" + this.settings.completionSuffix);
-					// Append the completion to the dataset file
-					this.app.vault.adapter.append(this.settings.datasetFile, this.settings.completionPrefix + "\"" + editor.getSelection() + "\"" + this.settings.completionSuffix);
-					// Append a new line to the dataset file
-					this.app.vault.adapter.append(this.settings.datasetFile, "\n");
-
-				}
+					}
+				});
 			}});
+			
 
 
 		// This adds a settings tab so the user can configure various aspects of the plugin
@@ -85,7 +93,8 @@ export default class TextDatasetAid extends Plugin {
 
 	onunload() {
 		console.log("unloading plugin");
-		// Release dataset file lock
+		// unlaod dataset file
+		this.unload();
 
 	}
 
