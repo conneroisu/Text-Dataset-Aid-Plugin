@@ -44,7 +44,7 @@ export default class TextDatasetAid extends Plugin {
 						console.log("Prompt: " + this.settings.promptPrefix + "\"" + editor.getSelection() + "\"" + this.settings.promptSuffix);
 						// Append the prompt to the dataset file
 						this.app.vault.adapter.append(this.settings.datasetFile, this.settings.promptPrefix + "\"" + editor.getSelection() + "\"" + this.settings.promptSuffix);
-						this.app.vault.createBinary("PromptTrackFileConOhObsidian.txt","");
+						this.app.vault.createBinary("PromptTrackFileConOhObsidian.txt", new ArrayBuffer(0));
 					}else{
 						new Notice("Last line in dataset is not empty. Please complete the last prompt before adding a new one" );
 					}
