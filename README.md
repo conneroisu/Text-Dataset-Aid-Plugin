@@ -95,7 +95,5 @@ Inspired by the efficiency and appeal of fine-tuning your own language model, th
 
 This plugin shares simularities to the textTransporter Plugin made by [TfTHacker](https://github.com/TfTHacker/obsidian42-text-transporter/)
 
-# Versioning notes
-You can simplify the version bump process by running `npm version patch`, `npm version minor` or `npm version major` after updating `minAppVersion` manually in `manifest.json`. The command will bump version in `manifest.json` and `package.json`, and add the entry for the new version to `versions.json`
-
+Made with
 
