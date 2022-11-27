@@ -6,6 +6,7 @@
 
 [![Build obsidian plugin](https://github.com/conneroisu/Text-Dataset-Aid-Plugin/actions/workflows/release.yml/badge.svg)](https://github.com/conneroisu/Text-Dataset-Aid-Plugin/actions/workflows/release.yml)
 
+Use a txt file to house your dataset. A feature to export your txt to a jsonl file will be added soon.
 
 # Context 
 ## Condition: Fully Working	
