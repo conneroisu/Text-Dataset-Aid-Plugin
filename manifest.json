@@ -1,9 +1,9 @@
 {
-	"id": "text-dataset-aid-plugin-obsidian",
+	"id": "obsidian-dataset-aid",
 	"name": "Text Dataset Aid Plugin",
 	"version": "0.1.7",
-	"minAppVersion": "0.15.0",
-	"description": "A plugin to help you create text datasets for machine learning.",
+	"minAppVersion": "1.0.0",
+	"description": "This plugin for obsidian aids in the creation of fine-tuning datasets for language models.",
 	"author": "Conner Ohnesorge",
 	"authorUrl": "https://obsidian.md",
 	"isDesktopOnly": false
