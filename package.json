@@ -1,5 +1,5 @@
 {
-	"name": "obsidian-dataset-aid",
+	"name": "Text-Dataset-Aid-Plugin",
 	"version": "0.1.7",
 	"description": "A plugin to help you create text datasets for machine learning.",
 	"main": "main.js",
