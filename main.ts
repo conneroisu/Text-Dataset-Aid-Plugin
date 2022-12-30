@@ -24,12 +24,8 @@ export default class TextDatasetAid extends Plugin {
 	async onload() {
 		console.log("loading plugin");
 		await this.loadSettings();
-
 		addIcon('PromptAid', PromptAid);
 		addIcon('CompletionAid', CompletionAid);
-		
-		
-
 		// This adds an editor command that can perform some operation on the current editor instance
 		this.addCommand({
 			id: 'prompt-dataset-aid',
@@ -87,15 +83,12 @@ export default class TextDatasetAid extends Plugin {
 
 		// This adds a settings tab so the user can configure various aspects of the plugin
 		this.addSettingTab(new TextDatasetAidSettingTab(this.app, this));
-
-
 	}
 
 	onunload() {
 		console.log("unloading plugin");
 		// unlaod dataset file
 		this.unload();
-
 	}
 
 	async loadSettings() {
@@ -111,19 +104,14 @@ export default class TextDatasetAid extends Plugin {
 
 class TextDatasetAidSettingTab extends PluginSettingTab {
 	plugin: TextDatasetAid;
-
 	constructor(app: App, plugin: TextDatasetAid) {
 		super(app, plugin);
 		this.plugin = plugin;
 	}
-
 	display(): void {
 		const {containerEl} = this;
-
 		containerEl.empty();
-
 		containerEl.createEl('h2', {text: 'Settings for my awesome plugin.'});
-
 		new Setting(containerEl)
 			.setName('Dataset File')
 			.setDesc('The file containing the dataset.')
