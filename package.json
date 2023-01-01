@@ -1,6 +1,6 @@
 {
 	"name": "Text-Dataset-Aid-Plugin",
-	"version": "1.0.0",
+	"version": "2.0.0",
 	"description": "A plugin to help you create text datasets for machine learning.",
 	"main": "main.js",
 	"scripts": {
