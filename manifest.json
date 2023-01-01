@@ -5,6 +5,6 @@
 	"minAppVersion": "1.0.0",
 	"description": "This plugin for obsidian aids in the creation of fine-tuning datasets for language models.",
 	"author": "Conner Ohnesorge",
-	"authorUrl": "https://obsidian.md",
+	"authorUrl": "https://github.com/conneroisu",
 	"isDesktopOnly": true
 }
