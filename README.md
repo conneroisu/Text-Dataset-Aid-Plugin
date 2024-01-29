@@ -91,6 +91,14 @@ There are four main settings that are configurable within the settings panel of 
 
 [Help within development](https://github.com/TfTHacker/obsidian42-text-transporter/blob/main/src/features/transporterFunctions.ts)
 
+## Development 
+
+Creating a new version:
+
+```bash
+git tag -a 1.0.1 -m "1.0.1"
+git push origin 1.0.1
+```
 # Inspiration
 
 Inspired by the efficiency and appeal of fine-tuning your own language model, this plugin allows for you to build datasets from your notes in the form of prompts and responses. Automatically formats the text to the specification of [OpenAI](https://openai.com/) for finetuning models like GPT3.
